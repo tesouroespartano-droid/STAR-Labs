@@ -1,0 +1,8 @@
+digraph JNI {
+  rankdir=LR;
+  JNI_OnLoad -> GetEnv;
+  JNI_OnLoad -> DecodeOrBuildStrings;
+  JNI_OnLoad -> RegisterNatives [label="count=12"];
+  RegisterNatives -> ModMenu_xA_xQ;
+  ModMenu_xA_xQ -> libservice_runtime [label="implementation unresolved"];
+}

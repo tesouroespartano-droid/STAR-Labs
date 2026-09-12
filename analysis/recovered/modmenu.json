@@ -1,0 +1,31 @@
+{
+  "class": "com.player.render.ModMenu",
+  "source": "analysis/work/jadx-src/sources/com/player/render/ModMenu.java",
+  "confidence": "VERIFIED",
+  "webview": {
+    "baseUrl": "http://menu.holy/",
+    "javascriptInterface": "Native",
+    "methods": ["init", "showKeyboard", "hideKeyboard"],
+    "channel": "android.webkit.WebMessageChannel",
+    "initialMessage": {"type": "init"}
+  },
+  "scripts": {
+    "directoryName": "xCoreScripts",
+    "externalStorage": true,
+    "apkEntryObserved": false
+  },
+  "nativeMethods": {
+    "xA": {"signature": "(Context)V", "role": "initialize with context", "confidence": "VERIFIED"},
+    "xB": {"signature": "(WebView)V", "role": "configure WebView", "confidence": "VERIFIED"},
+    "xC": {"signature": "(String)I", "role": "dispatch incoming JSON", "confidence": "VERIFIED"},
+    "xE": {"signature": "()V", "role": "post-WebView setup", "confidence": "PLAUSIBLE"},
+    "xF": {"signature": "()Z", "role": "enable native forwarding", "confidence": "VERIFIED"},
+    "xG": {"signature": "()Z", "role": "panel focus state", "confidence": "VERIFIED"},
+    "xH": {"signature": "()Z", "role": "text editor state", "confidence": "VERIFIED"},
+    "xI": {"signature": "(Z)V", "role": "keyboard/editor state", "confidence": "VERIFIED"},
+    "xJ": {"signature": "(String)V", "role": "native JSON forwarding", "confidence": "STRONG"},
+    "xK": {"signature": "(String)V", "role": "not called by recovered Java", "confidence": "UNKNOWN"},
+    "xP": {"signature": "(View,FF)Z", "role": "touch decision", "confidence": "VERIFIED"},
+    "xQ": {"signature": "()V", "role": "post-permission reinitialization", "confidence": "STRONG"}
+  }
+}

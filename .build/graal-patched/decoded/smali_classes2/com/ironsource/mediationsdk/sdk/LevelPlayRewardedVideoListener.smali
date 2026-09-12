@@ -1,0 +1,19 @@
+.class public interface abstract Lcom/ironsource/mediationsdk/sdk/LevelPlayRewardedVideoListener;
+.super Ljava/lang/Object;
+.source "SourceFile"
+
+# interfaces
+.implements Lcom/ironsource/mediationsdk/sdk/LevelPlayRewardedVideoBaseListener;
+
+
+# annotations
+.annotation runtime Ljava/lang/Deprecated;
+.end annotation
+
+
+# virtual methods
+.method public abstract onAdAvailable(Lcom/ironsource/mediationsdk/adunit/adapter/utility/AdInfo;)V
+.end method
+
+.method public abstract onAdUnavailable()V
+.end method

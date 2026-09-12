@@ -1,0 +1,15 @@
+# Generated from the read-only copy of libservice.so.
+# Command: strings -a -n 4 .../libservice.so | sort -u
+JNI_OnLoad
+libservice.so
+libandroid.so
+liblog.so
+libdl.so
+libm.so
+libc.so
+pthread_key_create
+pthread_key_delete
+clang version 19.0.1
+
+# No verified xCore/GS2/license URL or payload marker was found in the
+# printable strings selected by the analysis command.

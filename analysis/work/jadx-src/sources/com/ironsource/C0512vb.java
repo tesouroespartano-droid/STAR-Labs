@@ -1,0 +1,12 @@
+package com.ironsource;
+
+/* JADX INFO: renamed from: com.ironsource.vb, reason: case insensitive filesystem */
+/* JADX INFO: loaded from: classes2.dex */
+public final class C0512vb {
+    public static final String a = "server";
+    public static final String b = "publisher";
+    public static final String c = "console";
+    public static final String d = "shouldSendPublisherLogsOnUIThread";
+    public static final int e = 3;
+    public static final boolean f = false;
+}

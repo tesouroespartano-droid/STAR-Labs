@@ -1,0 +1,122 @@
+version: 2.9.1
+apkFileName: GraalOnlineXCoreExecuter(2).apk
+isFrameworkApk: false
+usesFramework:
+  ids:
+  - 1
+  tag: null
+sdkInfo:
+  minSdkVersion: 28
+  targetSdkVersion: 36
+packageInfo:
+  forcedPackageId: 127
+  renameManifestPackage: null
+versionInfo:
+  versionCode: 701672
+  versionName: 701672
+resourcesAreCompressed: false
+sharedLibrary: false
+sparseResources: false
+unknownFiles:
+  DebugProbesKt.bin: 0
+  asset-delivery.properties: 8
+  billing.properties: 8
+  client_analytics.proto: 8
+  core-common.properties: 8
+  firebase-analytics.properties: 8
+  firebase-encoders-json.properties: 8
+  firebase-encoders-proto.properties: 8
+  firebase-encoders.properties: 8
+  firebase-iid-interop.properties: 8
+  firebase-iid.properties: 8
+  firebase-measurement-connector.properties: 8
+  integrity.properties: 8
+  messaging_event.proto: 8
+  messaging_event_extension.proto: 8
+  play-services-ads-identifier.properties: 8
+  play-services-base.properties: 8
+  play-services-basement.properties: 8
+  play-services-cloud-messaging.properties: 8
+  play-services-cronet.properties: 8
+  play-services-location.properties: 8
+  play-services-measurement-api.properties: 8
+  play-services-measurement-base.properties: 8
+  play-services-measurement-impl.properties: 8
+  play-services-measurement-sdk-api.properties: 8
+  play-services-measurement-sdk.properties: 8
+  play-services-measurement.properties: 8
+  play-services-places-placereport.properties: 8
+  play-services-stats.properties: 8
+  play-services-tasks.properties: 8
+  google/protobuf/any.proto: 8
+  google/protobuf/api.proto: 8
+  google/protobuf/duration.proto: 8
+  google/protobuf/empty.proto: 8
+  google/protobuf/field_mask.proto: 8
+  google/protobuf/source_context.proto: 8
+  google/protobuf/struct.proto: 8
+  google/protobuf/timestamp.proto: 8
+  google/protobuf/type.proto: 8
+  google/protobuf/wrappers.proto: 8
+  okhttp3/internal/publicsuffix/publicsuffixes.gz: 0
+  src/google/protobuf/any.proto: 8
+  src/google/protobuf/api.proto: 8
+  src/google/protobuf/duration.proto: 8
+  src/google/protobuf/empty.proto: 8
+  src/google/protobuf/field_mask.proto: 8
+  src/google/protobuf/source_context.proto: 8
+  src/google/protobuf/struct.proto: 8
+  src/google/protobuf/timestamp.proto: 8
+  src/google/protobuf/type.proto: 8
+  src/google/protobuf/wrappers.proto: 8
+doNotCompress:
+- AndroidManifest.xml
+- classes.dex
+- resources.arsc
+- res/color/common_google_signin_btn_text_dark.xml
+- res/color/common_google_signin_btn_text_light.xml
+- res/color/common_google_signin_btn_tint.xml
+- res/drawable/common_google_signin_btn_icon_dark.xml
+- res/drawable/common_google_signin_btn_icon_dark_focused.xml
+- res/drawable/common_google_signin_btn_icon_dark_normal.xml
+- res/drawable/common_google_signin_btn_icon_disabled.xml
+- res/drawable/common_google_signin_btn_icon_light.xml
+- res/drawable/common_google_signin_btn_icon_light_focused.xml
+- res/drawable/common_google_signin_btn_icon_light_normal.xml
+- res/drawable/common_google_signin_btn_text_dark.xml
+- res/drawable/common_google_signin_btn_text_dark_focused.xml
+- res/drawable/common_google_signin_btn_text_dark_normal.xml
+- res/drawable/common_google_signin_btn_text_disabled.xml
+- res/drawable/common_google_signin_btn_text_light.xml
+- res/drawable/common_google_signin_btn_text_light_focused.xml
+- res/drawable/common_google_signin_btn_text_light_normal.xml
+- res/drawable/notification_action_background.xml
+- res/drawable/notification_bg.xml
+- res/drawable/notification_bg_low.xml
+- res/drawable/notification_icon_background.xml
+- res/drawable/notification_tile_bg.xml
+- png
+- res/layout/custom_dialog.xml
+- res/layout/notification_action.xml
+- res/layout/notification_action_tombstone.xml
+- res/layout/notification_template_custom_big.xml
+- res/layout/notification_template_icon_group.xml
+- res/layout/notification_template_part_chronometer.xml
+- res/layout/notification_template_part_time.xml
+- res/raw/com_android_billingclient_heterodyne_info
+- res/raw/com_android_billingclient_registration_info.binarypb
+- res/raw/firebase_common_keep.xml
+- res/raw/keep_cronet_api.xml
+- res/xml/com_android_billingclient_phenotype.xml
+- assets/google-services-desktop.json
+- assets/StreamingAssets.manifest
+- assets/StreamingAssets.zip
+- assets/UnityServicesProjectConfiguration.json
+- assets/aa/catalog.bin
+- assets/aa/catalog.hash
+- assets/aa/settings.json
+- assets/aa/AddressablesLink/link.xml
+- assets/bin/Data/RuntimeInitializeOnLoads.json
+- assets/bin/Data/ScriptingAssemblies.json
+- assets/dexopt/baseline.prof
+- assets/dexopt/baseline.profm

@@ -1,0 +1,16 @@
+{
+  "name": "star-labs",
+  "private": true,
+  "scripts": {
+    "analyze": "npm run analyze --prefix new-runtime",
+    "test": "npm test --prefix new-runtime",
+    "lint": "node --check new-runtime/src/lexer.js && node --check new-runtime/src/parser.js && node --check new-runtime/src/vm.js && node --check new-runtime/src/runtime.js",
+    "build-runtime": "npm run generate-runtime --prefix new-runtime",
+    "generate-runtime": "npm run generate-runtime --prefix new-runtime",
+    "server-test": "npm test --prefix server",
+    "server": "npm start --prefix server",
+    "build-android": "node new-runtime/tools/build-apk.js",
+    "build-apk": "node new-runtime/tools/build-apk.js",
+    "package-apk": "node new-runtime/tools/build-apk.js"
+  }
+}

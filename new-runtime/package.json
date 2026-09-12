@@ -1,0 +1,14 @@
+{
+  "name": "star-labs-independent-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independent GS2-like execution harness for STAR-Labs.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "analyze": "node tools/analyze.js",
+    "generate-runtime": "node tools/generate-runtime.js",
+    "build-apk": "node tools/build-apk.js",
+    "package-apk": "node tools/package-apk.js"
+  }
+}

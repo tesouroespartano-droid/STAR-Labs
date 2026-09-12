@@ -1,0 +1,71 @@
+package com.yasirkula.unity;
+
+import android.app.Fragment;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+
+/* JADX INFO: loaded from: classes2.dex */
+public class NativeGalleryPermissionFragment extends Fragment {
+    private static final int PERMISSIONS_REQUEST_CODE = 123655;
+    public static final String READ_PERMISSION_ONLY = "NG_ReadOnly";
+    private final NativeGalleryPermissionReceiver permissionReceiver;
+
+    public NativeGalleryPermissionFragment() {
+        this.permissionReceiver = null;
+    }
+
+    public NativeGalleryPermissionFragment(final NativeGalleryPermissionReceiver permissionReceiver) {
+        this.permissionReceiver = permissionReceiver;
+    }
+
+    @Override // android.app.Fragment
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (this.permissionReceiver == null) {
+            getFragmentManager().beginTransaction().remove(this).commit();
+        } else {
+            requestPermissions(getArguments().getBoolean(READ_PERMISSION_ONLY) ? new String[]{"android.permission.READ_EXTERNAL_STORAGE"} : new String[]{"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"}, PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    @Override // android.app.Fragment
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode != PERMISSIONS_REQUEST_CODE) {
+            return;
+        }
+        if (this.permissionReceiver == null) {
+            Log.e("Unity", "Fragment data got reset while asking permissions!");
+            getFragmentManager().beginTransaction().remove(this).commit();
+            return;
+        }
+        int i = 2;
+        if (permissions.length != 0 && grantResults.length != 0) {
+            int i2 = 1;
+            int i3 = 0;
+            while (true) {
+                if (i3 >= permissions.length || i3 >= grantResults.length) {
+                    i = i2;
+                    break;
+                }
+                if (grantResults[i3] == -1) {
+                    if (!shouldShowRequestPermissionRationale(permissions[i3])) {
+                        i = 0;
+                        break;
+                    }
+                    i2 = 2;
+                }
+                i3++;
+            }
+        }
+        this.permissionReceiver.OnPermissionResult(i);
+        getFragmentManager().beginTransaction().remove(this).commit();
+        try {
+            Intent intent = new Intent(getActivity(), getActivity().getClass());
+            intent.setFlags(131072);
+            getActivity().startActivityIfNeeded(intent, 0);
+        } catch (Exception e) {
+            Log.e("Unity", "Exception (resume):", e);
+        }
+    }
+}

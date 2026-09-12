@@ -1,0 +1,13 @@
+# Selected metadata/native string families observed in the APK.
+# Presence of a string is not proof of a call path.
+TGraalVar
+TGraalClientVar
+TActionScriptVar
+TriggerGet
+TriggerSet
+TriggerFunction
+Quattro
+NativeScript
+global-metadata.dat
+libil2cpp.so
+libunity.so

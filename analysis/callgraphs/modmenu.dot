@@ -1,0 +1,20 @@
+digraph ModMenu {
+  rankdir=LR;
+  StartMenu -> getActivity;
+  StartMenu -> initScriptsDir;
+  StartMenu -> xA;
+  StartMenu -> xB;
+  StartMenu -> xE;
+  StartMenu -> xQ [label="after storage permission"];
+  Native_init -> setupChannel;
+  setupChannel -> createWebMessageChannel;
+  setupChannel -> postWebMessage [label="{type:init}"];
+  WebMessageCallback -> xC [label="JSON"];
+  WebMessageCallback -> xJ [label="if xF"];
+  WebMessageCallback -> xG [label="action 5"];
+  Native_showKeyboard -> xI;
+  Native_hideKeyboard -> xI;
+  yA -> androidPort_postMessage;
+  yB -> loadDataWithBaseURL;
+  yD -> Toast;
+}

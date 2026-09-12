@@ -1,0 +1,245 @@
+{
+  "project_info": {
+    "project_number": "406618418939",
+    "project_id": "push-28ab4",
+    "storage_bucket": "push-28ab4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406618418939:android:1b095dc3d2b7acda578a5e",
+        "android_client_info": {
+          "package_name": "com.quattroplay.Belote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhf6_br3IbMw1iAvuWYuJvQMVCii-LfZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406618418939:android:1fd43fd33c0591a5578a5e",
+        "android_client_info": {
+          "package_name": "com.quattroplay.GraalClassic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406618418939-2godadkn4dvknkc7jkdle8p6h4so8bo4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quattroplay.GraalClassic",
+            "certificate_hash": "48354d6afb01a643b0013e788678fb2327be1b77"
+          }
+        },
+        {
+          "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhf6_br3IbMw1iAvuWYuJvQMVCii-LfZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406618418939:android:c5bf73c040f53a93578a5e",
+        "android_client_info": {
+          "package_name": "com.quattroplay.GraalDelteria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhf6_br3IbMw1iAvuWYuJvQMVCii-LfZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406618418939:android:27757f3a78a80f9f578a5e",
+        "android_client_info": {
+          "package_name": "com.quattroplay.GraalEra"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406618418939-e79fga8ef1hqurchba4endtdt87hhtv4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quattroplay.GraalEra",
+            "certificate_hash": "48354d6afb01a643b0013e788678fb2327be1b77"
+          }
+        },
+        {
+          "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhf6_br3IbMw1iAvuWYuJvQMVCii-LfZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406618418939:android:c4fc00f40f865396578a5e",
+        "android_client_info": {
+          "package_name": "com.quattroplay.GraalOlwest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406618418939-jdckbd92n8scqebgegqn8iaaacmb6pan.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quattroplay.GraalOlwest",
+            "certificate_hash": "48354d6afb01a643b0013e788678fb2327be1b77"
+          }
+        },
+        {
+          "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhf6_br3IbMw1iAvuWYuJvQMVCii-LfZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406618418939:android:baea0d90cdcef19e578a5e",
+        "android_client_info": {
+          "package_name": "com.quattroplay.GraalZone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406618418939-d12ge4d9qe477394pr1s7dm3k4fglf32.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quattroplay.GraalZone",
+            "certificate_hash": "48354d6afb01a643b0013e788678fb2327be1b77"
+          }
+        },
+        {
+          "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhf6_br3IbMw1iAvuWYuJvQMVCii-LfZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406618418939:android:def350180e2ce920578a5e",
+        "android_client_info": {
+          "package_name": "com.quattroplay.Tarot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhf6_br3IbMw1iAvuWYuJvQMVCii-LfZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406618418939-81t8t3p3lmjjjk36nuf396g3hose5n35.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,150 @@
+package com.ironsource;
+
+import android.text.TextUtils;
+import com.ironsource.mediationsdk.LoadWhileShowSupportState;
+import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
+import com.ironsource.mediationsdk.impressionData.ImpressionData;
+import com.ironsource.mediationsdk.logger.IronLog;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+/* JADX INFO: renamed from: com.ironsource.pa, reason: case insensitive filesystem */
+/* JADX INFO: loaded from: classes2.dex */
+public class C0410pa {
+    private static final String i = "WaterfallLifeCycleHolder";
+    private com.ironsource.mediationsdk.r d;
+    private final List<String> e;
+    private final int f;
+    ConcurrentHashMap<String, CopyOnWriteArrayList<com.ironsource.mediationsdk.r>> a = new ConcurrentHashMap<>();
+    private String b = "";
+    private String c = "";
+    private final Timer g = new Timer();
+    ConcurrentHashMap<String, AdInfo> h = new ConcurrentHashMap<>();
+
+    /* JADX INFO: renamed from: com.ironsource.pa$a */
+    class a extends TimerTask {
+        final /* synthetic */ String a;
+
+        a(String str) {
+            this.a = str;
+        }
+
+        @Override // java.util.TimerTask, java.lang.Runnable
+        public void run() {
+            try {
+                IronLog ironLog = IronLog.INTERNAL;
+                ironLog.verbose("removing waterfall with id " + this.a + " from memory");
+                C0410pa.this.a.remove(this.a);
+                ironLog.verbose("waterfall size is currently " + C0410pa.this.a.size());
+                ironLog.verbose("removing adInfo with id " + this.a + " from memory");
+                C0410pa.this.h.remove(this.a);
+                ironLog.verbose("adInfo size is currently " + C0410pa.this.h.size());
+            } finally {
+                cancel();
+            }
+        }
+    }
+
+    public C0410pa(List<String> list, int i2) {
+        this.e = list;
+        this.f = i2;
+    }
+
+    public synchronized void a(com.ironsource.mediationsdk.r rVar) {
+        IronLog.INTERNAL.verbose();
+        com.ironsource.mediationsdk.r rVar2 = this.d;
+        if (rVar2 != null && !rVar2.equals(rVar)) {
+            this.d.q();
+        }
+        this.d = rVar;
+    }
+
+    /* JADX WARN: Code duplicated, block: B:22:0x0053  */
+    public synchronized boolean b(com.ironsource.mediationsdk.r rVar) {
+        boolean z;
+        IronLog ironLog = IronLog.INTERNAL;
+        ironLog.verbose();
+        if (rVar == null || rVar.o()) {
+            z = true;
+        } else {
+            z = false;
+            if (this.d != null && ((rVar.w() == LoadWhileShowSupportState.LOAD_WHILE_SHOW_BY_NETWORK && this.d.c().equals(rVar.c())) || ((rVar.w() == LoadWhileShowSupportState.NONE || this.e.contains(rVar.j())) && this.d.j().equals(rVar.j())))) {
+                z = true;
+            }
+        }
+        if (z && rVar != null) {
+            ironLog.verbose(rVar.c() + " will not be added to the auction request");
+        }
+        return !z;
+    }
+
+    public CopyOnWriteArrayList<com.ironsource.mediationsdk.r> c() {
+        CopyOnWriteArrayList<com.ironsource.mediationsdk.r> copyOnWriteArrayList = this.a.get(this.b);
+        return copyOnWriteArrayList == null ? new CopyOnWriteArrayList<>() : copyOnWriteArrayList;
+    }
+
+    public String d() {
+        return this.b;
+    }
+
+    public int e() {
+        return this.a.size();
+    }
+
+    public com.ironsource.mediationsdk.r f() {
+        return this.d;
+    }
+
+    public synchronized boolean g() {
+        com.ironsource.mediationsdk.r rVar;
+        rVar = this.d;
+        return rVar != null && rVar.u().equals(this.c);
+    }
+
+    public void a(CopyOnWriteArrayList<com.ironsource.mediationsdk.r> copyOnWriteArrayList, String str) {
+        IronLog ironLog = IronLog.INTERNAL;
+        ironLog.verbose("updating new waterfall with id " + str);
+        b();
+        this.a.put(str, copyOnWriteArrayList);
+        if (!TextUtils.isEmpty(this.c)) {
+            if (g()) {
+                ironLog.verbose("ad from previous waterfall " + this.c + " is still showing - the current waterfall " + this.b + " will be deleted instead");
+                String str2 = this.b;
+                this.b = this.c;
+                this.c = str2;
+            }
+            this.g.schedule(new a(this.c), this.f);
+        }
+        this.c = this.b;
+        this.b = str;
+    }
+
+    private void b() {
+        for (com.ironsource.mediationsdk.r rVar : c()) {
+            if (!rVar.equals(this.d)) {
+                rVar.q();
+            }
+        }
+    }
+
+    public boolean a() {
+        return this.a.size() > 5;
+    }
+
+    public void a(String str, ImpressionData impressionData, C0394ob c0394ob) {
+        if (TextUtils.isEmpty(str) || impressionData == null) {
+            return;
+        }
+        this.h.put(str, new AdInfo(impressionData, c0394ob));
+    }
+
+    public AdInfo a(String str) {
+        if (this.h.containsKey(str)) {
+            return this.h.get(str);
+        }
+        return null;
+    }
+}
