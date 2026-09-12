@@ -56,13 +56,7 @@
         <meta-data android:name="unity.auto-report-fully-drawn" android:value="true"/>
         <meta-data android:name="unity.strip-engine-code" android:value="true"/>
         <meta-data android:name="unity.auto-set-game-state" android:value="true"/>
-        <activity android:name="com.star.labs.graal.StarLabsMainActivity" android:exported="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-    </activity>
-    <activity android:configChanges="density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode" android:enabled="true" android:exported="true" android:hardwareAccelerated="false" android:launchMode="singleTask" android:name="com.unity3d.player.UnityPlayerActivity" android:resizeableActivity="true" android:screenOrientation="userLandscape" android:theme="@style/UnityThemeSelector">
+        <activity android:configChanges="density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode" android:enabled="true" android:exported="true" android:hardwareAccelerated="false" android:launchMode="singleTask" android:name="com.unity3d.player.UnityPlayerActivity" android:resizeableActivity="true" android:screenOrientation="userLandscape" android:theme="@style/UnityThemeSelector">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN"/>
@@ -205,5 +199,6 @@
         <service android:exported="false" android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService" android:permission="android.permission.BIND_JOB_SERVICE"/>
         <receiver android:exported="false" android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"/>
         <service android:directBootAware="true" android:exported="false" android:name="androidx.room.MultiInstanceInvalidationService"/>
+        <provider android:name="com.star.labs.graal.StarLabsBootstrapProvider" android:authorities="com.quattroplay.GraalClassic.starlabs" android:exported="false" android:initOrder="-1000"/>
     </application>
 </manifest>

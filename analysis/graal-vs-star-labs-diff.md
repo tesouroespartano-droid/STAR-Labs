@@ -17,9 +17,11 @@ This document compares the base APK evidence to the independently engineered STA
 - `docs/` contains architecture and product documentation.
 - `analysis/` contains forensic and engineering documentation.
 
-## Gap
+## Current integration
 
-There is no actual final APK produced from the Graal base with STAR Labs integrated into it. There is no Android project, no final package, no signed APK, and no startup/installation validation in this workspace.
+The generated APK keeps the supplied Graal/Unity package and launcher. STAR Labs is injected as an in-process `ContentProvider` plus lifecycle callback and HTML asset. No clean official Graal baseline was available, so this is not represented as a clean-Graal reconstruction.
+
+The final artifact is `dist/apk/STAR-Labs-Graal-0.1.0.apk`, with size, ZIP, manifest, DEX, native-library, SHA-256, and signature checks performed by the build script.
 
 ## Conclusion
 
@@ -29,4 +31,5 @@ The repository has a strong evidence baseline and a valid independent runtime/se
 
 - Evidence baseline: **VERIFIED**
 - Independent runtime prototype: **VERIFIED**
-- Real final APK integration: **BLOCKED / NOT PRESENT**
+- Real APK packaging: **VERIFIED**
+- Device startup, native XCore deactivation, and end-to-end GS2 execution: **UNVERIFIED**

@@ -1,0 +1,3 @@
+# Large-script corpus: the test expands this fixture into 1301 executable assignments without imposing a source-line ceiling.
+let seed = 1
+return seed

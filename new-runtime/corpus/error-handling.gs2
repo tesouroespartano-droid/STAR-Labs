@@ -1,0 +1,2 @@
+call missingFunction()
+return null

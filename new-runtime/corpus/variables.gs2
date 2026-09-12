@@ -1,0 +1,3 @@
+let count = 2
+let total = count + 3
+return total

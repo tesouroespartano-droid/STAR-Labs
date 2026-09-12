@@ -1,0 +1,2 @@
+call scheduleEvent("tick", 10)
+return null

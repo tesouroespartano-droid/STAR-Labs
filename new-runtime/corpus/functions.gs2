@@ -1,0 +1,5 @@
+function add(left, right) {
+  return left + right
+}
+let result = add(4, 5)
+return result

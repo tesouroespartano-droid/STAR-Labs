@@ -8,13 +8,23 @@ OUT="$ROOT/dist/apk"
 SDK="/tmp/android-sdk"
 JAVA_HOME="/usr/local/sdkman/candidates/java/21.0.12+1-ms"
 APKTOOL_JAR="/tmp/apktool.jar"
-BUILDTOOLS="$SDK/build-tools/34.0.0"
+BUILDTOOLS="$SDK/build-tools/35.0.1"
+for required in unzip java javac keytool python3; do
+  command -v "$required" >/dev/null || { echo "Missing prerequisite: $required" >&2; exit 1; }
+done
+command -v readelf >/dev/null || { echo "Missing prerequisite: readelf" >&2; exit 1; }
+for required in "$APKTOOL_JAR" "$BUILDTOOLS/aapt2" "$BUILDTOOLS/apksigner" "$BUILDTOOLS/d8" "$SDK/platforms/android-34/android.jar"; do
+  test -f "$required" || { echo "Missing Android toolchain file: $required" >&2; exit 1; }
+done
+
+(cd "$ROOT" && npm test && npm run lint)
 
 mkdir -p "$WORK" "$OUT"
 rm -rf "$WORK"/*
 
 BASE_APK="$WORK/GraalOnlineXCoreExecuter(2).apk"
 unzip -p "$BASE_ZIP" 'GraalOnlineXCoreExecuter(2).apk' > "$BASE_APK"
+test -s "$BASE_APK"
 
 DECODED="$WORK/decoded"
 rm -rf "$DECODED"
@@ -26,99 +36,13 @@ export PATH="$JAVA_HOME/bin:$SDK/cmdline-tools/latest/bin:$SDK/platform-tools:$B
 java -jar "$APKTOOL_JAR" d -f -o "$DECODED" "$BASE_APK"
 
 mkdir -p "$WORK/src/com/star/labs/graal" "$WORK/classes" "$WORK/dex" "$WORK/assets"
-cat > "$WORK/src/com/star/labs/graal/StarLabsMainActivity.java" <<'EOF'
-package com.star.labs.graal;
+cp "$ROOT/tools/integration/StarLabsBootstrapProvider.java" "$WORK/src/com/star/labs/graal/StarLabsBootstrapProvider.java"
+cp "$ROOT/tools/integration/StarLabsLifecycleCallbacks.java" "$WORK/src/com/star/labs/graal/StarLabsLifecycleCallbacks.java"
+cp "$ROOT/tools/integration/star_labs.html" "$DECODED/assets/star_labs.html"
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+javac --release 17 -classpath "$SDK/platforms/android-34/android.jar" -d "$WORK/classes" "$WORK/src/com/star/labs/graal/StarLabsBootstrapProvider.java" "$WORK/src/com/star/labs/graal/StarLabsLifecycleCallbacks.java"
 
-public class StarLabsMainActivity extends Activity {
-    private static final String UNITY_ACTIVITY = "com.unity3d.player.UnityPlayerActivity";
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        WebView webView = new WebView(this);
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowContentAccess(true);
-        settings.setBuiltInZoomControls(false);
-        settings.setSupportZoom(false);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("file:///android_asset/star_labs.html");
-        setContentView(webView);
-
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            try {
-                Intent launch = new Intent(Intent.ACTION_MAIN);
-                launch.setClassName(getPackageName(), UNITY_ACTIVITY);
-                launch.addCategory(Intent.CATEGORY_DEFAULT);
-                startActivity(launch);
-            } catch (Exception ignored) {
-                // Graceful fallback if the original Unity activity is not present.
-            }
-        }, 350);
-    }
-}
-EOF
-
-cat > "$WORK/assets/star_labs.html" <<'EOF'
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>STAR Labs</title>
-    <style>
-      body {
-        margin: 0;
-        padding: 24px;
-        background: #0b1220;
-        color: #e6eefb;
-        font-family: sans-serif;
-      }
-      .panel {
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 18px;
-        padding: 20px;
-      }
-      button {
-        margin-top: 14px;
-        border: 0;
-        border-radius: 10px;
-        padding: 12px 18px;
-        font-weight: bold;
-        background: #53b7ff;
-        color: #071623;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="panel">
-      <h2>STAR Labs</h2>
-      <p>Graal Classic launch path active.</p>
-      <p>The original XCore UI is disabled in the active startup flow.</p>
-      <button onclick="document.body.insertAdjacentHTML('beforeend', '<p>Runtime initialized and ready.</p>')">Initialize runtime</button>
-    </div>
-  </body>
-</html>
-EOF
-
-cp "$WORK/assets/star_labs.html" "$DECODED/assets/star_labs.html"
-
-javac --release 17 -classpath "$SDK/platforms/android-34/android.jar" -d "$WORK/classes" "$WORK/src/com/star/labs/graal/StarLabsMainActivity.java"
-
-d8 --release --lib "$SDK/platforms/android-34/android.jar" --output "$WORK/dex" "$WORK/classes/com/star/labs/graal/StarLabsMainActivity.class"
+d8 --release --lib "$SDK/platforms/android-34/android.jar" --output "$WORK/dex" "$WORK/classes/com/star/labs/graal/StarLabsBootstrapProvider.class" "$WORK/classes/com/star/labs/graal/StarLabsLifecycleCallbacks.class"
 cp "$WORK/dex/classes.dex" "$DECODED/classes4.dex"
 
 python3 - "$DECODED/AndroidManifest.xml" <<'PY'
@@ -127,37 +51,131 @@ from pathlib import Path
 
 p = Path(sys.argv[1])
 text = p.read_text()
-needle = '<activity android:configChanges="density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode" android:enabled="true" android:exported="true" android:hardwareAccelerated="false" android:launchMode="singleTask" android:name="com.unity3d.player.UnityPlayerActivity" android:resizeableActivity="true" android:screenOrientation="userLandscape" android:theme="@style/UnityThemeSelector">'
-replacement = '''<activity android:name="com.star.labs.graal.StarLabsMainActivity" android:exported="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-    </activity>
-    ''' + needle
+needle = '    </application>'
+replacement = '''        <provider android:name="com.star.labs.graal.StarLabsBootstrapProvider" android:authorities="com.quattroplay.GraalClassic.starlabs" android:exported="false" android:initOrder="-1000"/>
+    </application>'''
 
-if 'com.star.labs.graal.StarLabsMainActivity' not in text:
+if 'com.star.labs.graal.StarLabsBootstrapProvider' not in text:
   text = text.replace(needle, replacement)
   p.write_text(text)
 PY
 
 keytool -genkeypair -keystore "$WORK/star-labs-debug.jks" -alias starlabs -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname 'CN=STAR Labs, OU=Engineering, O=STAR Labs, L=Local, S=Local, C=US' >/dev/null 2>&1 || true
 
-java -jar "$APKTOOL_JAR" b "$DECODED" -o "$OUT/STAR-Labs-Graal-0.1.0.apk" --use-aapt2
+UNSIGNED_APK="$WORK/STAR-Labs-Graal-0.1.0-unsigned.apk"
+APK="$OUT/STAR-Labs-Graal-0.1.0.apk"
+java -jar "$APKTOOL_JAR" b "$DECODED" -o "$UNSIGNED_APK" --use-aapt2
+test -s "$UNSIGNED_APK"
+ZIPALIGN_HELP="$($BUILDTOOLS/zipalign --help 2>&1 || true)"
+if [[ "$ZIPALIGN_HELP" == *"-P"* ]]; then
+  ZIPALIGN_MODE="page-16k"
+  "$BUILDTOOLS/zipalign" -f -P 16 4 "$UNSIGNED_APK" "$APK"
+else
+  ZIPALIGN_MODE="page-default"
+  "$BUILDTOOLS/zipalign" -f -p 4 "$UNSIGNED_APK" "$APK"
+fi
+test -s "$APK"
+if [ "$ZIPALIGN_MODE" = "page-16k" ]; then
+  "$BUILDTOOLS/zipalign" -c -P 16 -v 4 "$APK" >/dev/null
+else
+  "$BUILDTOOLS/zipalign" -c -p -v 4 "$APK" >/dev/null
+fi
+unzip -t "$APK" >/dev/null
+"$BUILDTOOLS/aapt2" dump badging "$APK" >/dev/null
+unzip -Z1 "$APK" > "$WORK/apk-entries.txt"
+grep -Fxq 'resources.arsc' "$WORK/apk-entries.txt"
+for native in lib/arm64-v8a/libunity.so lib/arm64-v8a/libil2cpp.so lib/arm64-v8a/libservice.so; do
+  grep -Fxq "$native" "$WORK/apk-entries.txt"
+  unzip -p "$APK" "$native" > "$WORK/$(basename "$native")"
+  readelf -h "$WORK/$(basename "$native")" | grep -E 'Class:[[:space:]]+ELF64|Machine:[[:space:]]+AArch64'
+done
+for dex in classes.dex classes2.dex classes3.dex classes4.dex; do
+  if grep -Fxq "$dex" "$WORK/apk-entries.txt"; then
+    unzip -p "$APK" "$dex" > "$WORK/$dex"
+    "$BUILDTOOLS/dexdump" -h "$WORK/$dex" >/dev/null
+  fi
+done
 
-apksigner sign --ks "$WORK/star-labs-debug.jks" --ks-pass pass:android --key-pass pass:android --out "$OUT/STAR-Labs-Graal-0.1.0.apk" "$OUT/STAR-Labs-Graal-0.1.0.apk"
-sha256sum "$OUT/STAR-Labs-Graal-0.1.0.apk" > "$OUT/STAR-Labs-Graal-0.1.0.apk.sha256"
+apksigner sign \
+  --ks "$WORK/star-labs-debug.jks" \
+  --ks-pass pass:android \
+  --key-pass pass:android \
+  --v1-signing-enabled true \
+  --v2-signing-enabled true \
+  --v3-signing-enabled true \
+  --out "$APK" "$APK"
+test -s "$APK"
+unzip -t "$APK" >/dev/null
+apksigner verify --verbose --min-sdk-version 28 "$APK" >/dev/null
+APK_SIZE_BYTES="$(stat --format='%s' "$APK")"
+APK_SIZE_MIB="$(awk -v size="$APK_SIZE_BYTES" 'BEGIN { printf "%.2f", size / 1048576 }')"
+APK_TIMESTAMP="$(stat --format='%y' "$APK")"
+echo "APK size: $APK_SIZE_BYTES bytes ($APK_SIZE_MIB MiB)"
+echo "APK timestamp: $APK_TIMESTAMP"
+OUTPUT_SHA256="$(sha256sum "$APK" | awk '{print $1}')"
+printf '%s  %s\n' "$OUTPUT_SHA256" "$(basename "$APK")" > "$OUT/STAR-Labs-Graal-0.1.0.apk.sha256"
+CERTIFICATE_SHA256="$(apksigner verify --print-certs "$APK" 2>&1 | awk -F': ' '/Signer #1 certificate SHA-256 digest/ { print $2; exit }')"
+BASE_CERTIFICATE_SHA256="$(apksigner verify --print-certs "$BASE_APK" 2>&1 | awk -F': ' '/Signer #1 certificate SHA-256 digest/ { print $2; exit }' || true)"
+PACKAGE_NAME="$("$BUILDTOOLS/aapt2" dump badging "$APK" | awk -F"'" '/^package:/ { print $2; exit }')"
+VERSION_CODE="$("$BUILDTOOLS/aapt2" dump badging "$APK" | awk -F"'" '/^package:/ { print $4; exit }')"
+VERSION_NAME="$("$BUILDTOOLS/aapt2" dump badging "$APK" | awk -F"'" '/^package:/ { print $6; exit }')"
+LAUNCHER="$("$BUILDTOOLS/aapt2" dump badging "$APK" | awk -F"'" '/^launchable-activity:/ { print $2; exit }')"
+
+INSTALL_STATUS="not-checked"
+INSTALL_OUTPUT="adb unavailable"
+if command -v adb >/dev/null; then
+  if adb get-state >/dev/null 2>&1; then
+    INSTALL_OUTPUT="$(adb install -r "$APK" 2>&1)" || {
+      echo "$INSTALL_OUTPUT" >&2
+      echo "adb installation failed" >&2
+      exit 1
+    }
+    INSTALL_STATUS="passed"
+  else
+    INSTALL_STATUS="device-unavailable"
+    INSTALL_OUTPUT="adb present but no device/emulator is accessible"
+  fi
+fi
+python3 - "$OUT/installation-validation.json" "$INSTALL_STATUS" "$INSTALL_OUTPUT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+Path(sys.argv[1]).write_text(json.dumps({
+    "status": sys.argv[2],
+    "output": sys.argv[3],
+}, indent=2) + "\n")
+PY
 
 cat > "$OUT/build-manifest.json" <<EOF
 {
   "name": "STAR-Labs-Graal-0.1.0.apk",
+  "filename": "STAR-Labs-Graal-0.1.0.apk",
+  "sizeBytes": $APK_SIZE_BYTES,
+  "sizeMiB": $APK_SIZE_MIB,
+  "buildTimestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "base": "analysis/evidence/original-apk/GraalOnlineXCoreExecuter.apk",
   "baseSha256": "1589cb10f86c171c54ce3bcf1c4ebf4679ee0011c4b6a63ba00f1c9ffa2ef9aa",
-  "outputSha256": "$(sha256sum "$OUT/STAR-Labs-Graal-0.1.0.apk" | awk '{print $1}')",
+  "baseCertificateSha256": "$BASE_CERTIFICATE_SHA256",
+  "outputSha256": "$OUTPUT_SHA256",
+  "packageName": "$PACKAGE_NAME",
+  "versionCode": "$VERSION_CODE",
+  "versionName": "$VERSION_NAME",
+  "launcher": "$LAUNCHER",
+  "certificateSha256": "$CERTIFICATE_SHA256",
   "status": "real-modified-apk-generated",
-  "launcher": "com.star.labs.graal.StarLabsMainActivity",
+  "bootstrapProvider": "com.star.labs.graal.StarLabsBootstrapProvider",
   "unityActivity": "com.unity3d.player.UnityPlayerActivity",
-  "xCoreActivePathDisabled": true,
+  "xCoreActivePathDisabled": "provider bootstrap replaces launcher; XCore residue requires runtime/device confirmation",
+  "validation": {
+    "nonEmpty": true,
+    "zipIntegrity": true,
+    "manifest": true,
+    "dex": true,
+    "signature": true,
+    "zipalign": "$ZIPALIGN_MODE",
+    "installation": "$INSTALL_STATUS"
+  },
   "toolchain": {
     "apktool": "2.9.1",
     "java": "/usr/local/sdkman/candidates/java/21.0.12+1-ms",

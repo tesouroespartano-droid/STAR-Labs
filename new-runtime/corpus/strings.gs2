@@ -1,0 +1,3 @@
+let prefix = "star"
+let label = prefix + " labs"
+return label

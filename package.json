@@ -10,7 +10,7 @@
     "server-test": "npm test --prefix server",
     "server": "npm start --prefix server",
     "build-android": "node new-runtime/tools/build-apk.js",
-    "build-apk": "node new-runtime/tools/build-apk.js",
-    "package-apk": "node new-runtime/tools/build-apk.js"
+    "build-apk": "bash tools/build-modified-graal-apk.sh",
+    "package-apk": "bash tools/build-modified-graal-apk.sh"
   }
 }

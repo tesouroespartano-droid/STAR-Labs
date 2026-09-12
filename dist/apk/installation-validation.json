@@ -1,0 +1,4 @@
+{
+  "status": "device-unavailable",
+  "output": "adb present but no device/emulator is accessible"
+}

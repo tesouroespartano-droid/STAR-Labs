@@ -23,6 +23,7 @@ class VM {
   evaluate(node, scope) {
     this.tick();
     if (node.type === 'Literal') return node.value;
+    if (node.type === 'ArrayExpression') return node.elements.map((element) => this.evaluate(element, scope));
     if (node.type === 'ObjectExpression') return Object.fromEntries(node.properties.map((property) => [property.key, this.evaluate(property.value, scope)]));
     if (node.type === 'Identifier') return scope[node.name];
     if (node.type === 'MemberExpression' || node.type === 'IndexExpression') { const object = this.evaluate(node.object, scope); const key = node.type === 'MemberExpression' ? node.property : this.evaluate(node.property, scope); return object?.[key]; }

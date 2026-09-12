@@ -1,39 +1,19 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>STAR Labs</title>
-    <style>
-      body {
-        margin: 0;
-        padding: 24px;
-        background: #0b1220;
-        color: #e6eefb;
-        font-family: sans-serif;
-      }
-      .panel {
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 18px;
-        padding: 20px;
-      }
-      button {
-        margin-top: 14px;
-        border: 0;
-        border-radius: 10px;
-        padding: 12px 18px;
-        font-weight: bold;
-        background: #53b7ff;
-        color: #071623;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="panel">
-      <h2>STAR Labs</h2>
-      <p>Graal Classic launch path active.</p>
-      <p>The original XCore UI is disabled in the active startup flow.</p>
-      <button onclick="document.body.insertAdjacentHTML('beforeend', '<p>Runtime initialized and ready.</p>')">Initialize runtime</button>
-    </div>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body { margin: 12px; font-family: sans-serif; background: rgba(8,16,30,.92); color: #e6eefb; }
+.panel { border: 1px solid rgba(83,183,255,.7); border-radius: 12px; padding: 12px; }
+button { border: 0; border-radius: 8px; padding: 8px 12px; background: #53b7ff; color: #071623; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="panel">
+<strong>STAR Labs</strong>
+<div id="status">Runtime initialized inside Graal.</div>
+<button onclick="document.getElementById('status').textContent='GS2 runtime ready'">Initialize runtime</button>
+</div>
+</body>
 </html>

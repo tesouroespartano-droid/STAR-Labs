@@ -6,9 +6,10 @@
     "notes": "Base evidence file preserved as-is; not modified."
   },
   "outputApk": {
-    "path": null,
-    "sha256": null,
-    "status": "not-built"
+    "path": "dist/apk/STAR-Labs-Graal-0.1.0.apk",
+    "sha256": "9d07b5ac7467cfefe2c2203caffa5861ebd4cbbf213d99f3ad38f0bfb7334c94",
+    "sizeBytes": 88068877,
+    "status": "built-and-static-validated"
   },
   "addedFiles": [
     "analysis/xcore-active-path.md",
@@ -22,13 +23,23 @@
     "server/",
     "docs/"
   ],
-  "modifiedFiles": [],
+  "modifiedFiles": [
+    "AndroidManifest.xml",
+    "classes4.dex",
+    "assets/star_labs.html"
+  ],
   "removedFiles": [],
   "replacedFiles": [],
-  "dexModifications": [],
+  "dexModifications": [
+    "com.star.labs.graal.StarLabsBootstrapProvider",
+    "com.star.labs.graal.StarLabsLifecycleCallbacks"
+  ],
   "nativeModifications": [],
   "resourceModifications": [],
-  "manifestModifications": [],
+  "manifestModifications": [
+    "preserved com.unity3d.player.UnityPlayerActivity launcher",
+    "added com.star.labs.graal.StarLabsBootstrapProvider"
+  ],
   "starLabsComponents": [
     "new-runtime lexer/parser/VM",
     "runtime bridge abstraction",
@@ -39,11 +50,11 @@
     "documentation set"
   ],
   "xCoreChanges": [
-    "No final XCore removal in a built APK; the base evidence still shows the custom active path in the original APK sample."
+    "XCore native residue is preserved pending device/runtime confirmation; no clean official Graal baseline was available."
   ],
   "signingInformation": {
-    "status": "not-available",
-    "notes": "No independent Android project or signing key exists yet."
+    "status": "available",
+    "notes": "APK signed with the generated local build key; not a release-store key."
   },
   "toolVersions": {
     "node": "system default",
@@ -52,7 +63,7 @@
     "adb": "not available"
   },
   "buildMetadata": {
-    "projectState": "evidence + independent prototypes exist; final APK build is intentionally blocked",
-    "blocker": "No independent Android project or Gradle wrapper exists in the repository."
+    "projectState": "V8 APK packaging, alignment, signing, and runtime corpus checks complete; device/runtime validation remains pending",
+    "blocker": "adb is present but no Android device or emulator was accessible."
   }
 }
