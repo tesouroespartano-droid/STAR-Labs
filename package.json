@@ -4,7 +4,7 @@
   "scripts": {
     "analyze": "npm run analyze --prefix new-runtime",
     "test": "npm test --prefix new-runtime",
-    "lint": "node --check new-runtime/src/lexer.js && node --check new-runtime/src/parser.js && node --check new-runtime/src/vm.js && node --check new-runtime/src/runtime.js",
+    "lint": "node --check new-runtime/src/lexer.js && node --check new-runtime/src/parser.js && node --check new-runtime/src/vm.js && node --check new-runtime/src/runtime.js && node --check new-runtime/src/function-registry.js && node --check new-runtime/src/function-reference.js && node --check new-runtime/src/client-bridge.js && node --check new-runtime/src/script-repository.js && node --check new-runtime/src/semantic.js && node --check new-runtime/src/language-service.js && node --check new-runtime/src/engine.js",
     "build-runtime": "npm run generate-runtime --prefix new-runtime",
     "generate-runtime": "npm run generate-runtime --prefix new-runtime",
     "server-test": "npm test --prefix server",

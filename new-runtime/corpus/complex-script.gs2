@@ -1,0 +1,24 @@
+# Fixture derived from the documented constructs currently supported by the engine.
+let player = { name: 'Ada', stats: { score: 3 } };
+let scores = [1, 2, 3, 4];
+
+function addScore(base, bonus) {
+  let total = base + bonus;
+  if (total > 5) {
+    return total;
+  } else {
+    return total + 1;
+  }
+}
+
+function buildResult(value) {
+  let result = { label: player.name, score: value };
+  return result;
+}
+
+let score = addScore(scores[2], player.stats.score);
+let output = buildResult(score);
+let count = 0;
+while (count < 2) {
+  count = count + 1;
+}

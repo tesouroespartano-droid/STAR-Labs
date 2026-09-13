@@ -35,14 +35,55 @@ export PATH="$JAVA_HOME/bin:$SDK/cmdline-tools/latest/bin:$SDK/platform-tools:$B
 
 java -jar "$APKTOOL_JAR" d -f -o "$DECODED" "$BASE_APK"
 
+python3 - "$DECODED" <<'PY'
+from pathlib import Path
+import sys
+
+decoded = Path(sys.argv[1])
+smali = decoded / 'smali_classes2' / 'com' / 'unity3d' / 'player' / 'UnityPlayerActivity.smali'
+if not smali.exists():
+    raise SystemExit(f'Missing UnityPlayerActivity.smali at {smali}')
+text = smali.read_text()
+needle = '    invoke-static {p0}, Lcom/player/render/ModMenu;->StartMenu(Landroid/content/Context;)V\n'
+if needle not in text:
+    raise SystemExit('XCore execution call not found in UnityPlayerActivity.smali')
+text = text.replace(needle, '')
+smali.write_text(text)
+PY
+
+python3 - "$DECODED" <<'PY'
+from pathlib import Path
+import sys
+
+decoded = Path(sys.argv[1])
+smali = decoded / 'smali_classes2' / 'com' / 'unity3d' / 'player' / 'UnityPlayerActivity.smali'
+text = smali.read_text()
+create_marker = '    invoke-virtual {p1}, Landroid/widget/FrameLayout;->requestFocus()Z\n'
+create_call = '    invoke-static {p0}, Lcom/star/labs/graal/StarLabsBootstrap;->start(Landroid/app/Activity;)V\n'
+destroy_marker = '    invoke-super {p0}, Landroid/app/Activity;->onDestroy()V\n'
+destroy_call = '    invoke-static {p0}, Lcom/star/labs/graal/StarLabsBootstrap;->stop(Landroid/app/Activity;)V\n'
+if create_marker not in text or destroy_marker not in text:
+  raise SystemExit('Unity lifecycle insertion point not found')
+if create_call not in text:
+  text = text.replace(create_marker, create_marker + create_call, 1)
+if destroy_call not in text:
+  text = text.replace(destroy_marker, destroy_call + destroy_marker, 1)
+smali.write_text(text)
+PY
+
+bash "$ROOT/tools/xcore-regression-gate.sh" "$DECODED"
+
 mkdir -p "$WORK/src/com/star/labs/graal" "$WORK/classes" "$WORK/dex" "$WORK/assets"
 cp "$ROOT/tools/integration/StarLabsBootstrapProvider.java" "$WORK/src/com/star/labs/graal/StarLabsBootstrapProvider.java"
 cp "$ROOT/tools/integration/StarLabsLifecycleCallbacks.java" "$WORK/src/com/star/labs/graal/StarLabsLifecycleCallbacks.java"
+cp "$ROOT/tools/integration/StarLabsBootstrap.java" "$WORK/src/com/star/labs/graal/StarLabsBootstrap.java"
+cp "$ROOT/tools/integration/StarLabsWebBridge.java" "$WORK/src/com/star/labs/graal/StarLabsWebBridge.java"
+cp "$ROOT/tools/integration/StarLabsRuntimeHost.java" "$WORK/src/com/star/labs/graal/StarLabsRuntimeHost.java"
 cp "$ROOT/tools/integration/star_labs.html" "$DECODED/assets/star_labs.html"
 
-javac --release 17 -classpath "$SDK/platforms/android-34/android.jar" -d "$WORK/classes" "$WORK/src/com/star/labs/graal/StarLabsBootstrapProvider.java" "$WORK/src/com/star/labs/graal/StarLabsLifecycleCallbacks.java"
+javac --release 17 -classpath "$SDK/platforms/android-34/android.jar" -d "$WORK/classes" "$WORK/src/com/star/labs/graal/StarLabsBootstrapProvider.java" "$WORK/src/com/star/labs/graal/StarLabsLifecycleCallbacks.java" "$WORK/src/com/star/labs/graal/StarLabsBootstrap.java" "$WORK/src/com/star/labs/graal/StarLabsWebBridge.java" "$WORK/src/com/star/labs/graal/StarLabsRuntimeHost.java"
 
-d8 --release --lib "$SDK/platforms/android-34/android.jar" --output "$WORK/dex" "$WORK/classes/com/star/labs/graal/StarLabsBootstrapProvider.class" "$WORK/classes/com/star/labs/graal/StarLabsLifecycleCallbacks.class"
+d8 --release --lib "$SDK/platforms/android-34/android.jar" --output "$WORK/dex" "$WORK/classes/com/star/labs/graal/"*.class
 cp "$WORK/dex/classes.dex" "$DECODED/classes4.dex"
 
 python3 - "$DECODED/AndroidManifest.xml" <<'PY'
@@ -52,7 +93,7 @@ from pathlib import Path
 p = Path(sys.argv[1])
 text = p.read_text()
 needle = '    </application>'
-replacement = '''        <provider android:name="com.star.labs.graal.StarLabsBootstrapProvider" android:authorities="com.quattroplay.GraalClassic.starlabs" android:exported="false" android:initOrder="-1000"/>
+replacement = '''        <provider android:name="com.star.labs.graal.StarLabsBootstrapProvider" android:authorities="com.quattroplay.GraalClassic.starlabs" android:enabled="false" android:exported="false" android:initOrder="-1000"/>
     </application>'''
 
 if 'com.star.labs.graal.StarLabsBootstrapProvider' not in text:
@@ -164,9 +205,12 @@ cat > "$OUT/build-manifest.json" <<EOF
   "launcher": "$LAUNCHER",
   "certificateSha256": "$CERTIFICATE_SHA256",
   "status": "real-modified-apk-generated",
+  "bootstrap": "com.star.labs.graal.StarLabsBootstrap",
+  "androidBridge": "com.star.labs.graal.StarLabsWebBridge",
+  "runtimeHost": "com.star.labs.graal.StarLabsRuntimeHost",
   "bootstrapProvider": "com.star.labs.graal.StarLabsBootstrapProvider",
   "unityActivity": "com.unity3d.player.UnityPlayerActivity",
-  "xCoreActivePathDisabled": "provider bootstrap replaces launcher; XCore residue requires runtime/device confirmation",
+  "xCoreActivePathDisabled": "UnityPlayerActivity ModMenu.StartMenu call removed; own STAR Labs bootstrap injected after Unity content initialization",
   "validation": {
     "nonEmpty": true,
     "zipIntegrity": true,

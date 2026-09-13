@@ -14,30 +14,8 @@ public final class StarLabsLifecycleCallbacks implements Application.ActivityLif
 
     @Override
     public void onActivityCreated(Activity activity, Bundle state) {
-        if (UNITY_ACTIVITY.equals(activity.getClass().getName())) {
-            attachRuntimePanel(activity);
-        }
-    }
-
-    private static void attachRuntimePanel(Activity activity) {
-        if (!(activity.getWindow().getDecorView() instanceof ViewGroup)) {
-            return;
-        }
-        ViewGroup root = (ViewGroup) activity.getWindow().getDecorView();
-        if (root.findViewWithTag(TAG) != null) {
-            return;
-        }
-        WebView panel = new WebView(activity);
-        panel.setTag(TAG);
-        WebSettings settings = panel.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setAllowFileAccess(true);
-        panel.setWebViewClient(new WebViewClient());
-        panel.loadUrl("file:///android_asset/star_labs.html");
-        root.addView(panel, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        // XCore active path disabled: preserve Graal's native Unity lifecycle and do
+        // not inject the runtime panel or WebView overlay into the actual game activity.
     }
 
     @Override public void onActivityStarted(Activity activity) { }

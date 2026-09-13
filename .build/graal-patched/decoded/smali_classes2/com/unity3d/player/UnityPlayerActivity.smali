@@ -99,7 +99,6 @@
     .line 37
     invoke-super {p0, p1}, Landroid/app/Activity;->onCreate(Landroid/os/Bundle;)V
 
-    invoke-static {p0}, Lcom/player/render/ModMenu;->StartMenu(Landroid/content/Context;)V
 
     .line 39
     invoke-virtual {p0}, Lcom/unity3d/player/UnityPlayerActivity;->getIntent()Landroid/content/Intent;
@@ -145,6 +144,7 @@
     move-result-object p1
 
     invoke-virtual {p1}, Landroid/widget/FrameLayout;->requestFocus()Z
+    invoke-static {p0}, Lcom/star/labs/graal/StarLabsBootstrap;->start(Landroid/app/Activity;)V
 
     return-void
 .end method
@@ -158,6 +158,7 @@
     invoke-virtual {v0}, Lcom/unity3d/player/UnityPlayerForActivityOrService;->destroy()V
 
     .line 75
+    invoke-static {p0}, Lcom/star/labs/graal/StarLabsBootstrap;->stop(Landroid/app/Activity;)V
     invoke-super {p0}, Landroid/app/Activity;->onDestroy()V
 
     return-void

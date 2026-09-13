@@ -16,7 +16,7 @@ function lex(source) {
     const start = index;
     if (/[A-Za-z_]/.test(character)) {
       index += 1;
-      while (index < source.length && /[A-Za-z0-9_.]/.test(source[index])) index += 1;
+      while (index < source.length && /[A-Za-z0-9_]/.test(source[index])) index += 1;
       const value = source.slice(start, index);
       push(keywords.has(value) ? 'keyword' : 'identifier', value, start);
       continue;

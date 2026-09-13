@@ -199,6 +199,6 @@
         <service android:exported="false" android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService" android:permission="android.permission.BIND_JOB_SERVICE"/>
         <receiver android:exported="false" android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"/>
         <service android:directBootAware="true" android:exported="false" android:name="androidx.room.MultiInstanceInvalidationService"/>
-        <provider android:name="com.star.labs.graal.StarLabsBootstrapProvider" android:authorities="com.quattroplay.GraalClassic.starlabs" android:exported="false" android:initOrder="-1000"/>
+        <provider android:name="com.star.labs.graal.StarLabsBootstrapProvider" android:authorities="com.quattroplay.GraalClassic.starlabs" android:enabled="false" android:exported="false" android:initOrder="-1000"/>
     </application>
 </manifest>

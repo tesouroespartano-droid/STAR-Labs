@@ -4,16 +4,133 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-body { margin: 12px; font-family: sans-serif; background: rgba(8,16,30,.92); color: #e6eefb; }
-.panel { border: 1px solid rgba(83,183,255,.7); border-radius: 12px; padding: 12px; }
-button { border: 0; border-radius: 8px; padding: 8px 12px; background: #53b7ff; color: #071623; font-weight: bold; }
+:root { color-scheme: dark; --bg: #17191d; --panel: #20242a; --line: #39414b; --text: #e8edf2; --muted: #9ba7b4; --accent: #65c18c; --error: #e76f68; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 13px monospace; background: transparent; color: var(--text); }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 8px; }
+button:hover, button:focus, input:focus, textarea:focus { border-color: var(--accent); outline: none; }
+.panel { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(23,25,29,.98); box-shadow: 0 8px 24px rgba(0,0,0,.32); }
+.header, .row { display: flex; align-items: center; gap: 8px; }
+.header { padding: 10px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.red { background: #e76f68; } .yellow { background: #e3bd61; } .green { background: #65c18c; }
+.title { margin-left: 4px; font-weight: 700; letter-spacing: .2px; }
+.nav, .tabs, .toolbar { display: flex; gap: 6px; align-items: center; padding: 7px 10px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.nav button.active, .tab.active { color: var(--text); background: #2b3138; border-color: var(--line); }
+.nav button, .tab, .toolbar button { color: var(--muted); white-space: nowrap; }
+.view { display: none; }
+.view.active { display: block; }
+.editor { display: grid; grid-template-columns: 38px 1fr; min-height: 230px; background: #121417; padding: 10px 0; }
+.lines { color: #66717d; text-align: right; padding-right: 10px; line-height: 1.55; user-select: none; }
+textarea { width: 100%; min-height: 230px; resize: vertical; border: 0; background: transparent; color: #d5dee7; line-height: 1.55; padding: 0 12px; white-space: pre; overflow: auto; }
+.status { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; color: var(--muted); border-top: 1px solid var(--line); }
+.logs-title { display: flex; justify-content: space-between; padding: 8px 10px; color: var(--text); border-top: 1px solid var(--line); cursor: pointer; }
+.logs { display: none; padding: 8px 10px; color: var(--muted); border-top: 1px solid var(--line); }
+.logs.open { display: block; }
+.console { max-height: 100px; overflow: auto; white-space: pre-wrap; }
+.card { padding: 12px; border-bottom: 1px solid var(--line); }
+.muted { color: var(--muted); } .error { color: var(--error); }
+.function { padding: 8px 10px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.function:hover { background: #2b3138; }
+input { width: 100%; padding: 7px; background: #121417; border: 1px solid var(--line); border-radius: 4px; }
+.settings { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px; }
+.settings label { display: grid; gap: 4px; color: var(--muted); }
+@media (max-width: 520px) { .settings { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <div class="panel">
-<strong>STAR Labs</strong>
-<div id="status">Runtime initialized inside Graal.</div>
-<button onclick="document.getElementById('status').textContent='GS2 runtime ready'">Initialize runtime</button>
+	<div class="header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="title">STAR Labs Executor</span></div>
+	<div class="nav"><button class="active" data-view="executor">Executor</button><button data-view="dashboard">Dashboard</button><button data-view="functions">Functions</button><button data-view="settings">Settings</button></div>
+	<section id="executor" class="view active">
+		<div id="tabs" class="tabs"></div>
+		<div class="toolbar"><button id="run">Run</button><button id="stop">Stop</button><button id="save">Save</button><button id="copy">Copy</button><button id="format">Format</button><button id="search">Search</button><button id="delete">Delete</button><button id="newScript">+</button></div>
+	<div class="editor"><div id="lines" class="lines">1</div><textarea id="source" spellcheck="false"></textarea></div>
+	<div class="status"><span id="cursor">Ln 1, Col 1</span><span id="functionCount">GS2 Functions: 0</span></div>
+	<div id="logsToggle" class="logs-title"><span>&lt; Script Logs</span><span>›</span></div>
+		<div id="logs" class="logs"><div>Console &nbsp; Output &nbsp; Problems &nbsp; Runtime &nbsp; Call Stack</div><div id="console" class="console"></div></div>
+	</section>
+	<section id="dashboard" class="view"><div class="card"><strong>Dashboard</strong><div id="dashboardState" class="muted"></div></div></section>
+	<section id="functions" class="view"><div class="card"><input id="functionSearch" placeholder="Search functions"></div><div id="functionList"></div></section>
+	<section id="settings" class="view"><div class="settings"><label>Font size<input id="fontSize" type="number" min="10" max="24" value="13"></label><label>Tab size<input id="tabSize" type="number" min="2" max="8" value="2"></label><label>Word wrap<input id="wordWrap" type="checkbox"></label><label>Autocomplete<input id="autocomplete" type="checkbox" checked></label></div></section>
+	</section>
+</div>
+<script>
+(function () {
+	'use strict';
+	var tabs = [{ name: 'script.gs2', source: 'function add(a, b) { return a + b; }\necho(add(10, 20));', dirty: false }];
+	var active = 0;
+	var source = document.getElementById('source');
+	var consoleElement = document.getElementById('console');
+	function bridge(name) { return window.StarLabs && typeof window.StarLabs[name] === 'function' ? window.StarLabs[name].bind(window.StarLabs) : null; }
+	function log(message, error) { var line = '[' + new Date().toLocaleTimeString() + '] ' + (error ? 'ERROR ' : 'INFO  ') + message; consoleElement.textContent += (consoleElement.textContent ? '\n' : '') + line; }
+	function renderTabs() { document.getElementById('tabs').innerHTML = tabs.map(function (tab, index) { return '<button class="tab ' + (index === active ? 'active' : '') + '" data-tab="' + index + '">' + tab.name + (tab.dirty ? ' •' : '') + ' ×</button>'; }).join(''); }
+	function renderSource() { source.value = tabs[active].source; document.getElementById('lines').innerHTML = source.value.split('\n').map(function (_, index) { return index + 1; }).join('<br>'); renderTabs(); }
+	function saveSettings() { var settings = { fontSize: document.getElementById('fontSize').value, tabSize: document.getElementById('tabSize').value, wordWrap: document.getElementById('wordWrap').checked, autocomplete: document.getElementById('autocomplete').checked }; var save = bridge('saveSettings'); if (save) save(JSON.stringify(settings)); }
+	function showView(id) { document.querySelectorAll('.view').forEach(function (view) { view.classList.toggle('active', view.id === id); }); document.querySelectorAll('.nav button').forEach(function (button) { button.classList.toggle('active', button.dataset.view === id); }); }
+	source.addEventListener('input', function () { tabs[active].source = source.value; tabs[active].dirty = true; renderTabs(); });
+	document.getElementById('tabs').addEventListener('click', function (event) { var index = Number(event.target.dataset.tab); if (!Number.isNaN(index)) { tabs[active].source = source.value; active = index; renderSource(); } });
+	document.querySelectorAll('.nav button').forEach(function (button) { button.addEventListener('click', function () { showView(button.dataset.view); }); });
+	document.getElementById('newScript').addEventListener('click', function () { tabs.push({ name: 'script' + (tabs.length + 1) + '.gs2', source: '', dirty: false }); active = tabs.length - 1; renderSource(); });
+	document.getElementById('save').addEventListener('click', function () { var save = bridge('saveScript'); if (save) save(tabs[active].name, source.value); tabs[active].dirty = false; renderTabs(); log(tabs[active].name + ' saved'); });
+	document.getElementById('run').addEventListener('click', function () { var run = bridge('runScript'); var result = run ? JSON.parse(run(source.value)) : { state: 'error', message: 'STAR Labs Android bridge unavailable' }; log((result.message || result.state) + (result.output ? ': ' + result.output : ''), result.state === 'error'); });
+	document.getElementById('stop').addEventListener('click', function () { log('Stop requested; no Android runtime session is active'); });
+	document.getElementById('copy').addEventListener('click', function () { if (navigator.clipboard) navigator.clipboard.writeText(source.value); log('Source copied'); });
+	document.getElementById('format').addEventListener('click', function () { source.value = source.value.split('\n').map(function (line) { return line.trim() ? line.replace(/^\s*/, '  ') : ''; }).join('\n'); tabs[active].source = source.value; tabs[active].dirty = true; renderSource(); log('Basic indentation applied'); });
+	document.getElementById('search').addEventListener('click', function () { var query = prompt('Search'); if (query) log(source.value.indexOf(query) >= 0 ? 'Found: ' + query : 'Not found: ' + query); });
+	document.getElementById('delete').addEventListener('click', function () { if (tabs.length === 1) return; tabs.splice(active, 1); active = Math.max(0, active - 1); renderSource(); });
+	document.getElementById('logsToggle').addEventListener('click', function () { document.getElementById('logs').classList.toggle('open'); });
+	['fontSize', 'tabSize', 'wordWrap', 'autocomplete'].forEach(function (id) { document.getElementById(id).addEventListener('change', saveSettings); });
+	document.getElementById('fontSize').addEventListener('input', function () { source.style.fontSize = this.value + 'px'; });
+	source.addEventListener('keyup', function () { var before = source.value.slice(0, source.selectionStart); var lines = before.split('\n'); document.getElementById('cursor').textContent = 'Ln ' + lines.length + ', Col ' + (lines[lines.length - 1].length + 1); });
+	document.getElementById('dashboardState').textContent = 'Runtime status is reported by the Android bridge. Open scripts: ' + tabs.length + '. Validated functions: 0.';
+	renderSource(); log('Executor UI initialized in Graal Unity activity');
+}());
+</script>
+</body>
+</html>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root { color-scheme: dark; --bg: #17191d; --panel: #20242a; --line: #39414b; --text: #e8edf2; --muted: #9ba7b4; --accent: #65c18c; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 13px monospace; background: transparent; color: var(--text); }
+.panel { overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(23,25,29,.97); box-shadow: 0 8px 24px rgba(0,0,0,.32); }
+.header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.red { background: #e76f68; } .yellow { background: #e3bd61; } .green { background: #65c18c; }
+.title { margin-left: 4px; font-weight: 700; letter-spacing: .2px; }
+.tabs, .toolbar { display: flex; gap: 6px; align-items: center; padding: 7px 10px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tab, button { color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 8px; font: inherit; white-space: nowrap; }
+.tab.active { color: var(--text); background: #2b3138; border-color: var(--line); }
+button { cursor: pointer; } button:hover, button:focus { color: var(--text); border-color: var(--accent); outline: none; }
+.editor { display: grid; grid-template-columns: 38px 1fr; min-height: 230px; background: #121417; padding: 10px 0; }
+.lines { color: #66717d; text-align: right; padding-right: 10px; line-height: 1.55; user-select: none; }
+pre { margin: 0; padding: 0 12px; color: #d5dee7; line-height: 1.55; white-space: pre-wrap; overflow: auto; }
+.status { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; color: var(--muted); border-top: 1px solid var(--line); }
+.logs-title { display: flex; justify-content: space-between; padding: 8px 10px; color: var(--text); border-top: 1px solid var(--line); cursor: pointer; }
+.logs { display: none; padding: 8px 10px; color: var(--muted); border-top: 1px solid var(--line); }
+.logs.open { display: block; }
+</style>
+</head>
+<body>
+<div class="panel">
+<div class="header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="title">STAR Labs Executor</span></div>
+<div class="tabs"><span class="tab active">script.gs2 ×</span><button aria-label="New script">+</button></div>
+<div class="toolbar"><button>Run</button><button>Stop</button><button>Save</button><button>Copy</button><button>Format</button><button>Search</button><button>Delete</button></div>
+<div class="editor"><div class="lines">1<br>2<br>3<br>4<br>5<br>6</div><pre>function onCreated() {
+	// STAR Labs script workspace
+	player.chat("Executor ready");
+}
+
+onCreated();</pre></div>
+<div class="status"><span>Ln 1, Col 1</span><span>GS2 Functions: 0</span></div>
+<div class="logs-title" onclick="document.getElementById('logs').classList.toggle('open')"><span>Script Logs</span><span>›</span></div>
+<div id="logs" class="logs"><div>Console Output &nbsp; Problems &nbsp; Runtime &nbsp; Call Stack</div><div id="status">Executor UI initialized in Graal Unity activity.</div></div>
 </div>
 </body>
 </html>

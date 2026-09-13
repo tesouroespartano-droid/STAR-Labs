@@ -11,8 +11,9 @@ public final class StarLabsBootstrapProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        Application application = (Application) getContext().getApplicationContext();
-        application.registerActivityLifecycleCallbacks(new StarLabsLifecycleCallbacks());
+        // XCore startup path is intentionally disabled. The provider remains as a
+        // harmless inert bootstrap so the Graal app keeps its original lifecycle
+        // without re-enabling the XCore overlay or runtime hooks.
         return true;
     }
 
